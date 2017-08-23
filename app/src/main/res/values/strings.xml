@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">Calculator</string>
+
+    <string name="memory_clear">MC</string>
+    <string name="memory_recall">MR</string>
+    <string name="memory_add">M+</string>
+    <string name="memory_subtract">M-</string>
+    <string name="memory_store">MS</string>
+
+    <string name="percentage">%</string>
+    <string name="square_root">√</string>
+    <string name="square">x²</string>
+    <string name="fraction">⅟x</string>
+    <string name="ce">CE</string>
+    <string name="c">C</string>
+    <string name="backspace">⌫</string>
+    <string name="division">÷</string>
+    <string name="plus_minus">±</string>
+    <string name="comma">,</string>
+    <string name="equal">＝</string>
+    <string name="add">+</string>
+    <string name="subtract">−</string>
+    <string name="multiplication">×</string>
+
+    <string name="value_9">9</string>
+    <string name="value_8">8</string>
+    <string name="value_7">7</string>
+    <string name="value_6">6</string>
+    <string name="value_5">5</string>
+    <string name="value_4">4</string>
+    <string name="value_3">3</string>
+    <string name="value_2">2</string>
+    <string name="value_1">1</string>
+    <string name="value_0">0</string>
+
 </resources>

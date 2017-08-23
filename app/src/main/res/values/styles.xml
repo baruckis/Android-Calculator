@@ -8,4 +8,23 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CalculatorButton">
+        <item name="android:textColor">@color/colorCalculatorButtonsText</item>
+        <item name="android:theme">@android:style/ThemeOverlay.Material.Dark</item>
+    </style>
+
+    <style name="CalculatorButton.Memory" parent="CalculatorButton">
+        <item name="android:backgroundTint">@color/colorCalculatorButtonMemory</item>
+    </style>
+
+    <style name="CalculatorButton.Number" parent="CalculatorButton">
+        <item name="android:backgroundTint">@color/colorCalculatorButtonNumber</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+    </style>
+
+    <style name="CalculatorButton.Action" parent="CalculatorButton">
+        <item name="android:backgroundTint">@color/colorCalculatorButtonAction</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+    </style>
+
 </resources>
