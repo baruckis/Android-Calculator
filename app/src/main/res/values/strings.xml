@@ -33,4 +33,9 @@
     <string name="value_1">1</string>
     <string name="value_0">0</string>
 
+    <string name="menu_item_history">History</string>
+
+    <string name="history">History: </string>
+    <string name="clear_history">Clear history</string>
+
 </resources>
