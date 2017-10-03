@@ -28,6 +28,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listener {
 
@@ -93,6 +94,8 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     private val SUBTRACTION = " − "
     private val MULTIPLICATION = " × "
     private val DIVISION = " ÷ "
+
+    private val COMMA = ","
 
     private val EQUAL = " = "
 
@@ -162,16 +165,64 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
         buttonCE.setOnClickListener{
             currentNumber = 0.0
-            textViewCurrentNumber.text = removeZero(currentNumber)
+            textViewCurrentNumber.text = formatDoubleToString(currentNumber)
         }
 
         buttonC.setOnClickListener{
             currentNumber = 0.0
             currentResult = 0.0
             currentAction = INIT
-            textViewCurrentNumber.text = removeZero(currentNumber)
+            textViewCurrentNumber.text = formatDoubleToString(currentNumber)
             historyText = ""
             textViewHistoryText.text = historyText
+            isOperationButtonClicked = false
+            isEqualButtonClicked = false
+        }
+
+        buttonBackspace.setOnClickListener{
+
+            if (isOperationButtonClicked || isEqualButtonClicked) return@setOnClickListener
+
+            var currentValue : String = textViewCurrentNumber.text.toString()
+
+            val charsLimit = if (currentValue.first().isDigit()) 1 else 2
+
+            if (currentValue.length > charsLimit)
+                currentValue = currentValue.substring(0, currentValue.length-1)
+            else
+                currentValue = ZERO
+
+            textViewCurrentNumber.text = currentValue
+            currentNumber = formatStringToDouble(currentValue)
+        }
+
+        buttonPlusMinus.setOnClickListener{
+
+            val currentValue : String = textViewCurrentNumber.text.toString()
+
+            currentNumber = formatStringToDouble(currentValue)
+            currentNumber *= -1
+            textViewCurrentNumber.text = formatDoubleToString(currentNumber)
+
+            if (isEqualButtonClicked) {
+                currentAction = INIT
+            }
+
+            isOperationButtonClicked = false
+            isEqualButtonClicked = false
+        }
+
+        buttonComma.setOnClickListener{
+
+            var currentValue : String = textViewCurrentNumber.text.toString()
+            if (isOperationButtonClicked || isEqualButtonClicked) {
+                currentValue = StringBuilder().append(ZERO).append(COMMA).toString()
+                if (isEqualButtonClicked) currentAction = INIT
+                currentNumber = 0.0
+            } else currentValue = StringBuilder().append(currentValue).append(COMMA).toString()
+
+            textViewCurrentNumber.text = currentValue
+
             isOperationButtonClicked = false
             isEqualButtonClicked = false
         }
@@ -180,11 +231,11 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
             if (isOperationButtonClicked) { currentNumber = currentResult }
 
-            var historyAllText = calculateResult()
+            val historyAllText = calculateResult()
 
             Toast.makeText(applicationContext, historyAllText, Toast.LENGTH_LONG).show()
 
-            historyText = StringBuilder().append(removeZero(currentResult)).toString()
+            historyText = StringBuilder().append(formatDoubleToString(currentResult)).toString()
 
             textViewHistoryText.text = ""
 
@@ -198,7 +249,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         var currentValue : String = textViewCurrentNumber.text.toString()
         currentValue = if (currentValue.equals(ZERO) || isOperationButtonClicked || isEqualButtonClicked) number else StringBuilder().append(currentValue).append(number).toString()
         textViewCurrentNumber.text = currentValue
-        currentNumber = currentValue.toDouble()
+        currentNumber = formatStringToDouble(currentValue)
 
         if (isEqualButtonClicked) {
             currentAction = INIT
@@ -207,7 +258,6 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         isOperationButtonClicked = false
         isEqualButtonClicked = false
     }
-
 
     private fun onOperationButtonClick(action : String) {
 
@@ -223,7 +273,6 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         isEqualButtonClicked = false
     }
 
-
     private fun calculateResult() : String {
 
         when (currentAction) {
@@ -237,24 +286,30 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             DIVISION -> currentResult = currentResult / currentNumber
         }
 
-        textViewCurrentNumber.text = removeZero(currentResult)
+        textViewCurrentNumber.text = formatDoubleToString(currentResult)
 
-        historyText = StringBuilder().append(historyText).append(currentAction).append(removeZero(currentNumber)).toString()
+        historyText = StringBuilder().append(historyText).append(currentAction).append(formatDoubleToString(currentNumber)).toString()
 
-        return StringBuilder().append(historyText).append(EQUAL).append(removeZero(currentResult)).toString()
+        return StringBuilder().append(historyText).append(EQUAL).append(formatDoubleToString(currentResult)).toString()
     }
 
+    private fun useNumberFormat(): DecimalFormat {
 
-    fun fmt(d: Double): String {
-        return if (d == d.toLong().toDouble())
-            String.format("%d", d.toLong())
-        else
-            String.format("%s", d)
+        val symbols = DecimalFormatSymbols()
+        symbols.decimalSeparator = ','
+
+        val format = DecimalFormat("#.##############")
+        format.decimalFormatSymbols = symbols
+
+        return format
     }
 
-    private fun removeZero(number: Double): String {
-        val format = DecimalFormat("#.###############")
-        return format.format(number)
+    private fun formatDoubleToString(number: Double): String {
+        return useNumberFormat().format(number)
+    }
+
+    private fun formatStringToDouble(number: String): Double {
+        return useNumberFormat().parse(number).toDouble()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -277,7 +332,6 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     override fun onItemClicked(position: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 
     // extension functions to add a behaviour to our Activity
     // lazy means it won’t be initialised right away but the first time the value is actually needed
