@@ -24,7 +24,7 @@
     <string name="memory_store">MS</string>
 
     <string name="percentage">%</string>
-    <string name="square_root">√</string>
+    <string name="root">√</string>
     <string name="square">x²</string>
     <string name="fraction">⅟x</string>
     <string name="ce">CE</string>

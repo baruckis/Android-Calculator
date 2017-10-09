@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     private val buttonMemoryStore : Button by bind(R.id.button_memory_store)
 
     private val buttonPercentage : Button by bind(R.id.button_percentage)
-    private val buttonSquareRoot : Button by bind(R.id.button_square_root)
+    private val buttonRoot: Button by bind(R.id.button_root)
     private val buttonSquare : Button by bind(R.id.button_square)
     private val buttonFraction : Button by bind(R.id.button_fraction)
     private val buttonCE : Button by bind(R.id.button_ce)
@@ -69,13 +69,15 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     private val textViewHistoryText: TextView by bind(R.id.number_history)
     private val textViewCurrentNumber: AppCompatTextView by bind(R.id.number_current)
 
-    private var isOperationButtonClicked : Boolean = false
+    private var isFutureOperationButtonClicked: Boolean = false
+    private var isInstantOperationButtonClicked : Boolean = false
     private var isEqualButtonClicked : Boolean = false
 
     private var currentNumber : Double = 0.0
     private var currentResult : Double = 0.0
 
     private var historyText = ""
+    private var historyInstantOperationText = ""
 
     private val ZERO : String = "0"
     private val ONE : String = "1"
@@ -95,11 +97,15 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     private val MULTIPLICATION = " × "
     private val DIVISION = " ÷ "
 
-    private val COMMA = ","
+    private val ROOT = "√"
+    private val SQUARE = "sqr"
+    private val FRACTION = "1/"
 
+    private val NEGATE = "negate"
+    private val COMMA = ","
     private val EQUAL = " = "
 
-    private var currentAction = INIT
+    private var currentOperation = INIT
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,40 +154,51 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         }
 
         buttonAddition.setOnClickListener{
-            onOperationButtonClick(ADDITION)
+            onFutureOperationButtonClick(ADDITION)
         }
 
         buttonSubtraction.setOnClickListener{
-            onOperationButtonClick(SUBTRACTION)
+            onFutureOperationButtonClick(SUBTRACTION)
         }
 
         buttonMultiplication.setOnClickListener{
-            onOperationButtonClick(MULTIPLICATION)
+            onFutureOperationButtonClick(MULTIPLICATION)
         }
 
         buttonDivision.setOnClickListener{
-            onOperationButtonClick(DIVISION)
+            onFutureOperationButtonClick(DIVISION)
         }
 
         buttonCE.setOnClickListener{
             currentNumber = 0.0
+
+            historyInstantOperationText = ""
+
             textViewCurrentNumber.text = formatDoubleToString(currentNumber)
+            if (isInstantOperationButtonClicked) textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).toString()
+
+            isInstantOperationButtonClicked = false
         }
 
         buttonC.setOnClickListener{
             currentNumber = 0.0
             currentResult = 0.0
-            currentAction = INIT
-            textViewCurrentNumber.text = formatDoubleToString(currentNumber)
+            currentOperation = INIT
+
             historyText = ""
+            historyInstantOperationText = ""
+
+            textViewCurrentNumber.text = formatDoubleToString(currentNumber)
             textViewHistoryText.text = historyText
-            isOperationButtonClicked = false
+
+            isFutureOperationButtonClicked = false
             isEqualButtonClicked = false
+            isInstantOperationButtonClicked = false
         }
 
         buttonBackspace.setOnClickListener{
 
-            if (isOperationButtonClicked || isEqualButtonClicked) return@setOnClickListener
+            if (isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked ) return@setOnClickListener
 
             var currentValue : String = textViewCurrentNumber.text.toString()
 
@@ -201,35 +218,51 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             val currentValue : String = textViewCurrentNumber.text.toString()
 
             currentNumber = formatStringToDouble(currentValue)
+            if (currentNumber == 0.0) return@setOnClickListener
+
             currentNumber *= -1
             textViewCurrentNumber.text = formatDoubleToString(currentNumber)
 
-            if (isEqualButtonClicked) {
-                currentAction = INIT
+            if (isInstantOperationButtonClicked) {
+                historyInstantOperationText = "($historyInstantOperationText)"
+                historyInstantOperationText = StringBuilder().append(NEGATE).append(historyInstantOperationText).toString()
+                textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).append(historyInstantOperationText).toString()
             }
 
-            isOperationButtonClicked = false
+            if (isEqualButtonClicked) {
+                currentOperation = INIT
+            }
+
+            isFutureOperationButtonClicked = false
             isEqualButtonClicked = false
         }
 
         buttonComma.setOnClickListener{
 
             var currentValue : String = textViewCurrentNumber.text.toString()
-            if (isOperationButtonClicked || isEqualButtonClicked) {
+
+            if (isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked) {
                 currentValue = StringBuilder().append(ZERO).append(COMMA).toString()
-                if (isEqualButtonClicked) currentAction = INIT
+                if (isInstantOperationButtonClicked) {
+                    historyInstantOperationText = ""
+                    textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).toString()
+                }
+                if (isEqualButtonClicked) currentOperation = INIT
                 currentNumber = 0.0
+            } else if (currentValue.contains(COMMA)) {
+                return@setOnClickListener
             } else currentValue = StringBuilder().append(currentValue).append(COMMA).toString()
 
             textViewCurrentNumber.text = currentValue
 
-            isOperationButtonClicked = false
+            isFutureOperationButtonClicked = false
+            isInstantOperationButtonClicked = false
             isEqualButtonClicked = false
         }
 
         buttonEqual.setOnClickListener{
 
-            if (isOperationButtonClicked) { currentNumber = currentResult }
+            if (isFutureOperationButtonClicked) { currentNumber = currentResult }
 
             val historyAllText = calculateResult()
 
@@ -239,43 +272,92 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
             textViewHistoryText.text = ""
 
-            isOperationButtonClicked = false
+            isFutureOperationButtonClicked = false
             isEqualButtonClicked = true;
+        }
+
+        buttonRoot.setOnClickListener{
+            onInstantOperationButtonClick(ROOT)
+        }
+
+        buttonSquare.setOnClickListener{
+            onInstantOperationButtonClick(SQUARE)
+        }
+
+        buttonFraction.setOnClickListener{
+            onInstantOperationButtonClick(FRACTION)
         }
     }
 
     private fun onNumberButtonClick(number : String) {
 
         var currentValue : String = textViewCurrentNumber.text.toString()
-        currentValue = if (currentValue.equals(ZERO) || isOperationButtonClicked || isEqualButtonClicked) number else StringBuilder().append(currentValue).append(number).toString()
+        currentValue = if (currentValue.equals(ZERO) || isFutureOperationButtonClicked || isEqualButtonClicked) number else StringBuilder().append(currentValue).append(number).toString()
         textViewCurrentNumber.text = currentValue
         currentNumber = formatStringToDouble(currentValue)
 
         if (isEqualButtonClicked) {
-            currentAction = INIT
+            currentOperation = INIT
         }
 
-        isOperationButtonClicked = false
+        isFutureOperationButtonClicked = false
         isEqualButtonClicked = false
     }
 
-    private fun onOperationButtonClick(action : String) {
+    private fun onFutureOperationButtonClick(operation: String) {
 
-        if (!isOperationButtonClicked && !isEqualButtonClicked) {
+        if (!isFutureOperationButtonClicked && !isEqualButtonClicked) {
             calculateResult()
         }
 
-        currentAction = action
+        currentOperation = operation
 
-        textViewHistoryText.text = StringBuilder().append(historyText).append(action).toString()
+        if (isInstantOperationButtonClicked) {
+            isInstantOperationButtonClicked = false
+            historyText = textViewHistoryText.text.toString()
+        }
+        textViewHistoryText.text = StringBuilder().append(historyText).append(operation).toString()
 
-        isOperationButtonClicked = true
+        isFutureOperationButtonClicked = true
         isEqualButtonClicked = false
+    }
+
+    private fun onInstantOperationButtonClick(operation: String) {
+
+        var currentValue : String = textViewCurrentNumber.text.toString()
+        var thisOperationNumber :Double = formatStringToDouble(currentValue)
+        currentValue = "(${formatDoubleToString(thisOperationNumber)})"
+
+        if (isInstantOperationButtonClicked) {
+            historyInstantOperationText = "($historyInstantOperationText)"
+            historyInstantOperationText = StringBuilder().append(operation).append(historyInstantOperationText).toString()
+            textViewHistoryText.text = if (isEqualButtonClicked) historyInstantOperationText else StringBuilder().append(historyText).append(currentOperation).append(historyInstantOperationText).toString()
+        } else if (isEqualButtonClicked) {
+            historyInstantOperationText = StringBuilder().append(operation).append(currentValue).toString()
+            textViewHistoryText.text = historyInstantOperationText
+        } else {
+            historyInstantOperationText = StringBuilder().append(operation).append(currentValue).toString()
+            textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).append(historyInstantOperationText).toString()
+        }
+
+        when (operation) {
+
+            ROOT -> thisOperationNumber = thisOperationNumber.sqrt()
+            SQUARE -> thisOperationNumber = thisOperationNumber * thisOperationNumber
+            FRACTION -> thisOperationNumber = 1 / thisOperationNumber
+        }
+
+        textViewCurrentNumber.text = formatDoubleToString(thisOperationNumber)
+
+        if (isEqualButtonClicked) currentResult = thisOperationNumber else currentNumber = thisOperationNumber
+
+        isInstantOperationButtonClicked = true
+        isFutureOperationButtonClicked = false
     }
 
     private fun calculateResult() : String {
 
-        when (currentAction) {
+        when (currentOperation) {
             INIT -> {
                 currentResult = currentNumber
                 historyText = StringBuilder().append(textViewHistoryText.text.toString()).toString()
@@ -284,11 +366,18 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             SUBTRACTION -> currentResult = currentResult - currentNumber
             MULTIPLICATION -> currentResult = currentResult * currentNumber
             DIVISION -> currentResult = currentResult / currentNumber
+
         }
 
         textViewCurrentNumber.text = formatDoubleToString(currentResult)
 
-        historyText = StringBuilder().append(historyText).append(currentAction).append(formatDoubleToString(currentNumber)).toString()
+        if (isInstantOperationButtonClicked) {
+            isInstantOperationButtonClicked = false
+            historyText = textViewHistoryText.text.toString()
+            if (isEqualButtonClicked) historyText = StringBuilder().append(historyText).append(currentOperation).append(formatDoubleToString(currentNumber)).toString()
+        } else {
+            historyText = StringBuilder().append(historyText).append(currentOperation).append(formatDoubleToString(currentNumber)).toString()
+        }
 
         return StringBuilder().append(historyText).append(EQUAL).append(formatDoubleToString(currentResult)).toString()
     }
@@ -312,6 +401,9 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         return useNumberFormat().parse(number).toDouble()
     }
 
+    private fun Double.sqrt(): Double = Math.sqrt(this)
+
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -332,6 +424,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     override fun onItemClicked(position: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
 
     // extension functions to add a behaviour to our Activity
     // lazy means it won’t be initialised right away but the first time the value is actually needed

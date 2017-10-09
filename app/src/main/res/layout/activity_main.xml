@@ -143,7 +143,7 @@
             android:text="@string/percentage" />
 
         <Button
-            android:id="@+id/button_square_root"
+            android:id="@+id/button_root"
             style="@style/CalculatorButton.Action"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -151,7 +151,7 @@
             android:layout_columnWeight="1"
             android:layout_row="0"
             android:layout_rowWeight="1"
-            android:text="@string/square_root" />
+            android:text="@string/root" />
 
         <Button
             android:id="@+id/button_square"
