@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     private val MULTIPLICATION = " × "
     private val DIVISION = " ÷ "
 
+    private val PERCENTAGE = ""
     private val ROOT = "√"
     private val SQUARE = "sqr"
     private val FRACTION = "1/"
@@ -276,6 +277,10 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             isEqualButtonClicked = true;
         }
 
+        buttonPercentage.setOnClickListener{
+            onInstantOperationButtonClick(PERCENTAGE)
+        }
+
         buttonRoot.setOnClickListener{
             onInstantOperationButtonClick(ROOT)
         }
@@ -326,7 +331,18 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
         var currentValue : String = textViewCurrentNumber.text.toString()
         var thisOperationNumber :Double = formatStringToDouble(currentValue)
+
         currentValue = "(${formatDoubleToString(thisOperationNumber)})"
+
+        when (operation) {
+            PERCENTAGE -> {
+                thisOperationNumber = (currentResult * thisOperationNumber)/100
+                currentValue = formatDoubleToString(thisOperationNumber)
+            }
+            ROOT -> thisOperationNumber = thisOperationNumber.sqrt()
+            SQUARE -> thisOperationNumber = thisOperationNumber * thisOperationNumber
+            FRACTION -> thisOperationNumber = 1 / thisOperationNumber
+        }
 
         if (isInstantOperationButtonClicked) {
             historyInstantOperationText = "($historyInstantOperationText)"
@@ -338,13 +354,6 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         } else {
             historyInstantOperationText = StringBuilder().append(operation).append(currentValue).toString()
             textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).append(historyInstantOperationText).toString()
-        }
-
-        when (operation) {
-
-            ROOT -> thisOperationNumber = thisOperationNumber.sqrt()
-            SQUARE -> thisOperationNumber = thisOperationNumber * thisOperationNumber
-            FRACTION -> thisOperationNumber = 1 / thisOperationNumber
         }
 
         textViewCurrentNumber.text = formatDoubleToString(thisOperationNumber)
@@ -366,7 +375,6 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             SUBTRACTION -> currentResult = currentResult - currentNumber
             MULTIPLICATION -> currentResult = currentResult * currentNumber
             DIVISION -> currentResult = currentResult / currentNumber
-
         }
 
         textViewCurrentNumber.text = formatDoubleToString(currentResult)
