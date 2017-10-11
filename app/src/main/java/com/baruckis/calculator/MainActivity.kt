@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
     private var currentNumber : Double = 0.0
     private var currentResult : Double = 0.0
+    private var memory : Double = 0.0
 
     private var historyText = ""
     private var historyInstantOperationText = ""
@@ -171,14 +172,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         }
 
         buttonCE.setOnClickListener{
-            currentNumber = 0.0
-
-            historyInstantOperationText = ""
-
-            textViewCurrentNumber.text = formatDoubleToString(currentNumber)
-            if (isInstantOperationButtonClicked) textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).toString()
-
-            isInstantOperationButtonClicked = false
+            clearEntry()
         }
 
         buttonC.setOnClickListener{
@@ -292,6 +286,59 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         buttonFraction.setOnClickListener{
             onInstantOperationButtonClick(FRACTION)
         }
+
+        buttonMemoryClear.isEnabled = false
+        buttonMemoryClear.setOnClickListener{
+
+            buttonMemoryClear.isEnabled = false
+            buttonMemoryRecall.isEnabled = false
+
+            memory = 0.0
+
+            Toast.makeText(applicationContext, getString(R.string.memory_cleared_toast), Toast.LENGTH_SHORT).show()
+        }
+
+        buttonMemoryRecall.isEnabled = false
+        buttonMemoryRecall.setOnClickListener{
+
+            clearEntry(memory)
+
+            Toast.makeText(applicationContext, getString(R.string.memory_recalled_toast), Toast.LENGTH_SHORT).show()
+        }
+
+        buttonMemoryAdd.setOnClickListener{
+
+            buttonMemoryClear.isEnabled = true
+            buttonMemoryRecall.isEnabled = true
+
+            val newMemory = memory + currentNumber
+
+            Toast.makeText(applicationContext, getString(R.string.memory_added_toast) + "${formatDoubleToString(memory)} + ${formatDoubleToString(currentNumber)} = ${formatDoubleToString(newMemory)}" , Toast.LENGTH_LONG).show()
+
+            memory = newMemory
+        }
+
+        buttonMemorySubtract.setOnClickListener{
+
+            buttonMemoryClear.isEnabled = true
+            buttonMemoryRecall.isEnabled = true
+
+            val newMemory = memory - currentNumber
+
+            Toast.makeText(applicationContext, getString(R.string.memory_subtracted_toast) + "${formatDoubleToString(memory)} - ${formatDoubleToString(currentNumber)} = ${formatDoubleToString(newMemory)}" , Toast.LENGTH_LONG).show()
+
+            memory = newMemory
+        }
+
+        buttonMemoryStore.setOnClickListener{
+            memory = currentNumber
+
+            buttonMemoryClear.isEnabled = true
+            buttonMemoryRecall.isEnabled = true
+
+            Toast.makeText(applicationContext, getString(R.string.memory_stored_toast) + formatDoubleToString(memory), Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun onNumberButtonClick(number : String) {
@@ -410,6 +457,23 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     }
 
     private fun Double.sqrt(): Double = Math.sqrt(this)
+
+    private fun clearEntry(newNumber : Double = 0.0) {
+        historyInstantOperationText = ""
+
+        if (isInstantOperationButtonClicked) textViewHistoryText.text = StringBuilder().append(historyText).append(currentOperation).toString()
+
+        if (isEqualButtonClicked) {
+            currentOperation = INIT
+        }
+
+        isInstantOperationButtonClicked = false
+        isFutureOperationButtonClicked = false
+        isEqualButtonClicked = false
+
+        currentNumber = newNumber
+        textViewCurrentNumber.text = formatDoubleToString(newNumber)
+    }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

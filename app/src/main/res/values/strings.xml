@@ -54,4 +54,10 @@
     <string name="history">History: </string>
     <string name="clear_history">Clear history</string>
 
+    <string name="memory_cleared_toast">Memory cleared</string>
+    <string name="memory_recalled_toast">Memory recalled</string>
+    <string name="memory_added_toast">"Memory added: "</string>
+    <string name="memory_subtracted_toast">"Memory subtracted: "</string>
+    <string name="memory_stored_toast">"Memory stored: "</string>
+
 </resources>
