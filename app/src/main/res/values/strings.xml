@@ -53,6 +53,9 @@
 
     <string name="history">History: </string>
     <string name="clear_history">Clear history</string>
+    <string name="history_result">"History result: "</string>
+    <string name="no_history">"There's no history yet."</string>
+    <string name="history_cleared">History cleared</string>
 
     <string name="memory_cleared_toast">Memory cleared</string>
     <string name="memory_recalled_toast">Memory recalled</string>

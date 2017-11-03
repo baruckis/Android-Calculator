@@ -24,21 +24,24 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import java.util.*
+
 
 /**
  *
  * A fragment that shows a list of items as a modal bottom sheet.
  *
- * You can show this modal bottom sheet from your activity like this:
- * <pre>
- * HistoryActionListDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
-</pre> *
- *
  * You activity (or fragment) needs to implement [HistoryActionListDialogFragment.Listener].
  */
 class HistoryActionListDialogFragment : BottomSheetDialogFragment() {
+
     private var mListener: Listener? = null
+
+    private lateinit var mData: ArrayList<String>
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,9 +49,28 @@ class HistoryActionListDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+
+        // initializing an ArrayList in one line when fragment is already attached to Activity and string resources are available to reach
+        mData = ArrayList<String>(Arrays.asList(getString(R.string.no_history)))
+
+        val data = arguments.getStringArrayList(ARG_HISTORY_ACTION)
+        if (data.isNotEmpty()) {
+            mData.clear()
+            mData.addAll(data)
+        }
+
         val recyclerView = view!!.findViewById<View>(R.id.list) as RecyclerView?
         recyclerView!!.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = ItemAdapter(arguments.getInt(ARG_ITEM_COUNT))
+        recyclerView.adapter = ItemAdapter(mData)
+
+        val buttonClearHistory: ImageButton = view.findViewById(R.id.button_clear_history)
+        buttonClearHistory.setOnClickListener {
+            data.clear()
+            mData.clear()
+            mData.add(getString(R.string.no_history))
+            recyclerView.adapter.notifyDataSetChanged()
+            Toast.makeText(activity, getString(R.string.history_cleared), Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onAttach(context: Context?) {
@@ -67,51 +89,54 @@ class HistoryActionListDialogFragment : BottomSheetDialogFragment() {
     }
 
     interface Listener {
-        fun onItemClicked(position: Int)
+        fun onHistoryItemClicked(resultText: String)
     }
 
     private inner class ViewHolder internal constructor(inflater: LayoutInflater, parent: ViewGroup) : RecyclerView.ViewHolder(inflater.inflate(R.layout.fragment_history_action_list_dialog_item, parent, false)) {
 
-        internal val text: TextView
+        internal val rowLayout: LinearLayout = itemView.findViewById<View>(R.id.row) as LinearLayout
+        internal val actionTextView: TextView = itemView.findViewById<View>(R.id.action) as TextView
+        internal val resultTextView: TextView = itemView.findViewById<View>(R.id.result) as TextView
 
         init {
-            text = itemView.findViewById<View>(R.id.text) as TextView
-            text.setOnClickListener {
+            rowLayout.setOnClickListener {
                 if (mListener != null) {
-                    mListener!!.onItemClicked(adapterPosition)
+                    mListener!!.onHistoryItemClicked(resultTextView.text.toString())
                     dismiss()
                 }
             }
-        }// TODO: Customize the item layout
+        }
 
     }
 
-    private inner class ItemAdapter internal constructor(private val mItemCount: Int) : RecyclerView.Adapter<ViewHolder>() {
+    private inner class ItemAdapter internal constructor(private val mHistoryActionList: ArrayList<String>) : RecyclerView.Adapter<ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(LayoutInflater.from(parent.context), parent)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.text.text = position.toString()
+            // Regular expression lookbehind with delimiter "="
+            val reg = Regex("(?<=[=])")
+            val historyActionList = mHistoryActionList.get(position).split(reg)
+            holder.actionTextView.text = if (historyActionList.size == 1) "" else historyActionList.first()
+            holder.resultTextView.text = historyActionList.last().trim()
         }
 
         override fun getItemCount(): Int {
-            return mItemCount
+            return mHistoryActionList.count()
         }
 
     }
 
     companion object {
 
-        // TODO: Customize parameter argument names
-        private val ARG_ITEM_COUNT = "item_count"
+        private val ARG_HISTORY_ACTION = "history_action"
 
-        // TODO: Customize parameters
-        fun newInstance(itemCount: Int): HistoryActionListDialogFragment {
+        fun newInstance(historyActionList: ArrayList<String>): HistoryActionListDialogFragment {
             val fragment = HistoryActionListDialogFragment()
             val args = Bundle()
-            args.putInt(ARG_ITEM_COUNT, itemCount)
+            args.putStringArrayList(ARG_HISTORY_ACTION, historyActionList)
             fragment.arguments = args
             return fragment
         }

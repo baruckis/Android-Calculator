@@ -29,6 +29,7 @@ import android.widget.TextView
 import android.widget.Toast
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
+import java.text.ParseException
 
 class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listener {
 
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
     private var historyText = ""
     private var historyInstantOperationText = ""
+    private var historyActionList : ArrayList<String> = ArrayList()
 
     private val ZERO : String = "0"
     private val ONE : String = "1"
@@ -263,12 +265,14 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
             Toast.makeText(applicationContext, historyAllText, Toast.LENGTH_LONG).show()
 
+            historyActionList.add(historyAllText)
+
             historyText = StringBuilder().append(formatDoubleToString(currentResult)).toString()
 
             textViewHistoryText.text = ""
 
             isFutureOperationButtonClicked = false
-            isEqualButtonClicked = true;
+            isEqualButtonClicked = true
         }
 
         buttonPercentage.setOnClickListener{
@@ -349,12 +353,20 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
     }
 
-    private fun onNumberButtonClick(number : String) {
+    @Throws(IllegalArgumentException::class)
+    private fun onNumberButtonClick(number : String, isHistory : Boolean = false) {
 
         var currentValue : String = textViewCurrentNumber.text.toString()
-        currentValue = if (currentValue.equals(ZERO) || isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked) number else StringBuilder().append(currentValue).append(number).toString()
+        // In Kotlin, using the equality operator == will call the equals method behind the scenes.
+        currentValue = if (currentValue.equals(ZERO) || isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked || isHistory) number else StringBuilder().append(currentValue).append(number).toString()
+
+        try {
+            currentNumber = formatStringToDouble(currentValue)
+        } catch (e: ParseException) {
+            throw IllegalArgumentException("String must be number.")
+        }
+
         textViewCurrentNumber.text = currentValue
-        currentNumber = formatStringToDouble(currentValue)
 
         if (isEqualButtonClicked) {
             currentOperation = INIT
@@ -500,7 +512,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
         when (item?.itemId) {
             R.id.menu_item_history -> {
-                HistoryActionListDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog")
+                HistoryActionListDialogFragment.newInstance(historyActionList).show(getSupportFragmentManager(), "dialog")
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -508,8 +520,15 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
 
     }
 
-    override fun onItemClicked(position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onHistoryItemClicked(resultText: String) {
+
+        try {
+            onNumberButtonClick(resultText, true)
+        } catch (e: IllegalArgumentException) {
+            return
+        }
+
+        Toast.makeText(applicationContext, getString(R.string.history_result) + resultText, Toast.LENGTH_SHORT).show()
     }
 
     // extension functions to add a behaviour to our Activity

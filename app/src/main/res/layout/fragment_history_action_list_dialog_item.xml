@@ -17,6 +17,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -27,12 +28,12 @@
     android:paddingTop="@dimen/list_item_spacing_half">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/text"
+        android:id="@+id/action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="viewEnd"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="9 + 2 - 1 × 10 = " />
+        tools:textView="9 + 2 - 1 × 10 = " />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/result"
@@ -40,6 +41,6 @@
         android:layout_height="wrap_content"
         android:textAlignment="viewEnd"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        tools:text="100" />
+        tools:textView="100" />
 
 </LinearLayout>
