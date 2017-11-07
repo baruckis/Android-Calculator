@@ -39,6 +39,7 @@ import java.util.*
  */
 class HistoryActionListDialogFragment : BottomSheetDialogFragment() {
 
+    // If ? is inserted after any type name, we have explicitly instructed the compiler that the value of the type can either store an object reference or can be null.
     private var mListener: Listener? = null
 
     private lateinit var mData: ArrayList<String>
@@ -49,8 +50,7 @@ class HistoryActionListDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-
-        // initializing an ArrayList in one line when fragment is already attached to Activity and string resources are available to reach
+        // Initializing an ArrayList in one line when fragment is already attached to Activity and string resources are available to reach.
         mData = ArrayList<String>(Arrays.asList(getString(R.string.no_history)))
 
         val data = arguments.getStringArrayList(ARG_HISTORY_ACTION)
@@ -101,6 +101,7 @@ class HistoryActionListDialogFragment : BottomSheetDialogFragment() {
         init {
             rowLayout.setOnClickListener {
                 if (mListener != null) {
+                    // Operator with !! allows to bypass nullability checking by the Kotlin compiler.
                     mListener!!.onHistoryItemClicked(resultTextView.text.toString())
                     dismiss()
                 }

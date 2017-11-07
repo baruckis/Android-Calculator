@@ -31,67 +31,68 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.text.ParseException
 
+// Extends AppCompatActivity class and implements Listener interface from HistoryActionListDialogFragment.
 class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listener {
 
-    // Buttons shouldn’t be mutable, because once its value is assigned it won’t change
+    // Than we use this function to assign button, because once done its value won't change.
     // Keyword by is delegate, which adds a special behaviour to a property.
-    private val button0 : Button by bind(R.id.button_0)
-    private val button1 : Button by bind(R.id.button_1)
-    private val button2 : Button by bind(R.id.button_2)
-    private val button3 : Button by bind(R.id.button_3)
-    private val button4 : Button by bind(R.id.button_4)
-    private val button5 : Button by bind(R.id.button_5)
-    private val button6 : Button by bind(R.id.button_6)
-    private val button7 : Button by bind(R.id.button_7)
-    private val button8 : Button by bind(R.id.button_8)
-    private val button9 : Button by bind(R.id.button_9)
+    private val button0: Button by bind(R.id.button_0)
+    private val button1: Button by bind(R.id.button_1)
+    private val button2: Button by bind(R.id.button_2)
+    private val button3: Button by bind(R.id.button_3)
+    private val button4: Button by bind(R.id.button_4)
+    private val button5: Button by bind(R.id.button_5)
+    private val button6: Button by bind(R.id.button_6)
+    private val button7: Button by bind(R.id.button_7)
+    private val button8: Button by bind(R.id.button_8)
+    private val button9: Button by bind(R.id.button_9)
 
-    private val buttonMemoryClear : Button by bind(R.id.button_memory_clear)
-    private val buttonMemoryRecall : Button by bind(R.id.button_memory_recall)
-    private val buttonMemoryAdd : Button by bind(R.id.button_memory_add)
-    private val buttonMemorySubtract : Button by bind(R.id.button_memory_subtract)
-    private val buttonMemoryStore : Button by bind(R.id.button_memory_store)
+    private val buttonMemoryClear: Button by bind(R.id.button_memory_clear)
+    private val buttonMemoryRecall: Button by bind(R.id.button_memory_recall)
+    private val buttonMemoryAdd: Button by bind(R.id.button_memory_add)
+    private val buttonMemorySubtract: Button by bind(R.id.button_memory_subtract)
+    private val buttonMemoryStore: Button by bind(R.id.button_memory_store)
 
-    private val buttonPercentage : Button by bind(R.id.button_percentage)
+    private val buttonPercentage: Button by bind(R.id.button_percentage)
     private val buttonRoot: Button by bind(R.id.button_root)
-    private val buttonSquare : Button by bind(R.id.button_square)
-    private val buttonFraction : Button by bind(R.id.button_fraction)
-    private val buttonCE : Button by bind(R.id.button_ce)
-    private val buttonC : Button by bind(R.id.button_c)
-    private val buttonBackspace : Button by bind(R.id.button_backspace)
-    private val buttonDivision : Button by bind(R.id.button_division)
-    private val buttonMultiplication : Button by bind(R.id.button_multiplication)
+    private val buttonSquare: Button by bind(R.id.button_square)
+    private val buttonFraction: Button by bind(R.id.button_fraction)
+    private val buttonCE: Button by bind(R.id.button_ce)
+    private val buttonC: Button by bind(R.id.button_c)
+    private val buttonBackspace: Button by bind(R.id.button_backspace)
+    private val buttonDivision: Button by bind(R.id.button_division)
+    private val buttonMultiplication: Button by bind(R.id.button_multiplication)
     private val buttonSubtraction: Button by bind(R.id.button_subtraction)
     private val buttonAddition: Button by bind(R.id.button_addition)
-    private val buttonEqual : Button by bind(R.id.button_equal)
-    private val buttonPlusMinus : Button by bind(R.id.button_plus_minus)
-    private val buttonComma : Button by bind(R.id.button_comma)
+    private val buttonEqual: Button by bind(R.id.button_equal)
+    private val buttonPlusMinus: Button by bind(R.id.button_plus_minus)
+    private val buttonComma: Button by bind(R.id.button_comma)
 
     private val textViewHistoryText: TextView by bind(R.id.number_history)
     private val textViewCurrentNumber: AppCompatTextView by bind(R.id.number_current)
 
     private var isFutureOperationButtonClicked: Boolean = false
-    private var isInstantOperationButtonClicked : Boolean = false
-    private var isEqualButtonClicked : Boolean = false
+    private var isInstantOperationButtonClicked: Boolean = false
+    private var isEqualButtonClicked: Boolean = false
 
-    private var currentNumber : Double = 0.0
-    private var currentResult : Double = 0.0
-    private var memory : Double = 0.0
+    private var currentNumber: Double = 0.0 // Value can be changed.
+    private var currentResult: Double = 0.0
+    private var memory: Double = 0.0
 
-    private var historyText = ""
+    private var historyText = "" // Recognize type of variable without declaring it.
     private var historyInstantOperationText = ""
-    private var historyActionList : ArrayList<String> = ArrayList()
+    private var historyActionList: ArrayList<String> = ArrayList()
 
-    private val ZERO : String = "0"
-    private val ONE : String = "1"
-    private val TWO : String = "2"
-    private val THREE : String = "3"
-    private val FOUR : String = "4"
-    private val FIVE : String = "5"
-    private val SIX : String = "6"
-    private val SEVEN : String = "7"
-    private val EIGHT : String = "8"
-    private val NINE : String = "9"
+    private val ZERO: String = "0" // Value cannot be changed.
+    private val ONE: String = "1"
+    private val TWO: String = "2"
+    private val THREE: String = "3"
+    private val FOUR: String = "4"
+    private val FIVE: String = "5"
+    private val SIX: String = "6"
+    private val SEVEN: String = "7"
+    private val EIGHT: String = "8"
+    private val NINE: String = "9"
 
     private val INIT = ""
 
@@ -157,27 +158,27 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             onNumberButtonClick(NINE)
         }
 
-        buttonAddition.setOnClickListener{
+        buttonAddition.setOnClickListener {
             onFutureOperationButtonClick(ADDITION)
         }
 
-        buttonSubtraction.setOnClickListener{
+        buttonSubtraction.setOnClickListener {
             onFutureOperationButtonClick(SUBTRACTION)
         }
 
-        buttonMultiplication.setOnClickListener{
+        buttonMultiplication.setOnClickListener {
             onFutureOperationButtonClick(MULTIPLICATION)
         }
 
-        buttonDivision.setOnClickListener{
+        buttonDivision.setOnClickListener {
             onFutureOperationButtonClick(DIVISION)
         }
 
-        buttonCE.setOnClickListener{
+        buttonCE.setOnClickListener {
             clearEntry()
         }
 
-        buttonC.setOnClickListener{
+        buttonC.setOnClickListener {
             currentNumber = 0.0
             currentResult = 0.0
             currentOperation = INIT
@@ -193,16 +194,16 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             isInstantOperationButtonClicked = false
         }
 
-        buttonBackspace.setOnClickListener{
+        buttonBackspace.setOnClickListener {
 
-            if (isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked ) return@setOnClickListener
+            if (isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked) return@setOnClickListener
 
-            var currentValue : String = textViewCurrentNumber.text.toString()
+            var currentValue: String = textViewCurrentNumber.text.toString()
 
             val charsLimit = if (currentValue.first().isDigit()) 1 else 2
 
             if (currentValue.length > charsLimit)
-                currentValue = currentValue.substring(0, currentValue.length-1)
+                currentValue = currentValue.substring(0, currentValue.length - 1)
             else
                 currentValue = ZERO
 
@@ -210,9 +211,9 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             currentNumber = formatStringToDouble(currentValue)
         }
 
-        buttonPlusMinus.setOnClickListener{
+        buttonPlusMinus.setOnClickListener {
 
-            val currentValue : String = textViewCurrentNumber.text.toString()
+            val currentValue: String = textViewCurrentNumber.text.toString()
 
             currentNumber = formatStringToDouble(currentValue)
             if (currentNumber == 0.0) return@setOnClickListener
@@ -234,9 +235,9 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             isEqualButtonClicked = false
         }
 
-        buttonComma.setOnClickListener{
+        buttonComma.setOnClickListener {
 
-            var currentValue : String = textViewCurrentNumber.text.toString()
+            var currentValue: String = textViewCurrentNumber.text.toString()
 
             if (isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked) {
                 currentValue = StringBuilder().append(ZERO).append(COMMA).toString()
@@ -257,9 +258,11 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             isEqualButtonClicked = false
         }
 
-        buttonEqual.setOnClickListener{
+        buttonEqual.setOnClickListener {
 
-            if (isFutureOperationButtonClicked) { currentNumber = currentResult }
+            if (isFutureOperationButtonClicked) {
+                currentNumber = currentResult
+            }
 
             val historyAllText = calculateResult()
 
@@ -275,24 +278,24 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
             isEqualButtonClicked = true
         }
 
-        buttonPercentage.setOnClickListener{
+        buttonPercentage.setOnClickListener {
             onInstantOperationButtonClick(PERCENTAGE)
         }
 
-        buttonRoot.setOnClickListener{
+        buttonRoot.setOnClickListener {
             onInstantOperationButtonClick(ROOT)
         }
 
-        buttonSquare.setOnClickListener{
+        buttonSquare.setOnClickListener {
             onInstantOperationButtonClick(SQUARE)
         }
 
-        buttonFraction.setOnClickListener{
+        buttonFraction.setOnClickListener {
             onInstantOperationButtonClick(FRACTION)
         }
 
         buttonMemoryClear.isEnabled = false
-        buttonMemoryClear.setOnClickListener{
+        buttonMemoryClear.setOnClickListener {
 
             buttonMemoryClear.isEnabled = false
             buttonMemoryRecall.isEnabled = false
@@ -303,46 +306,49 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         }
 
         buttonMemoryRecall.isEnabled = false
-        buttonMemoryRecall.setOnClickListener{
+        buttonMemoryRecall.setOnClickListener {
 
             clearEntry(memory)
 
             Toast.makeText(applicationContext, getString(R.string.memory_recalled_toast), Toast.LENGTH_SHORT).show()
         }
 
-        buttonMemoryAdd.setOnClickListener{
+        buttonMemoryAdd.setOnClickListener {
 
             buttonMemoryClear.isEnabled = true
             buttonMemoryRecall.isEnabled = true
 
-            val currentValue : String = textViewCurrentNumber.text.toString()
-            val thisOperationNumber : Double = formatStringToDouble(currentValue)
+            val currentValue: String = textViewCurrentNumber.text.toString()
+            val thisOperationNumber: Double = formatStringToDouble(currentValue)
 
             val newMemory = memory + thisOperationNumber
 
-            Toast.makeText(applicationContext, getString(R.string.memory_added_toast) + "${formatDoubleToString(memory)} + ${formatDoubleToString(thisOperationNumber)} = ${formatDoubleToString(newMemory)}" , Toast.LENGTH_LONG).show()
+            // Strings in Kotlin can include references to variables that are interpolated.
+            // In addition to simple variable references, they can also include any expression enclosed in curly braces.
+            // Also you can still do the string concatenation if you like using plus sign.
+            Toast.makeText(applicationContext, getString(R.string.memory_added_toast) + "${formatDoubleToString(memory)} + ${formatDoubleToString(thisOperationNumber)} = ${formatDoubleToString(newMemory)}", Toast.LENGTH_LONG).show()
 
             memory = newMemory
         }
 
-        buttonMemorySubtract.setOnClickListener{
+        buttonMemorySubtract.setOnClickListener {
 
             buttonMemoryClear.isEnabled = true
             buttonMemoryRecall.isEnabled = true
 
-            val currentValue : String = textViewCurrentNumber.text.toString()
-            val thisOperationNumber : Double = formatStringToDouble(currentValue)
+            val currentValue: String = textViewCurrentNumber.text.toString()
+            val thisOperationNumber: Double = formatStringToDouble(currentValue)
 
             val newMemory = memory - thisOperationNumber
 
-            Toast.makeText(applicationContext, getString(R.string.memory_subtracted_toast) + "${formatDoubleToString(memory)} - ${formatDoubleToString(thisOperationNumber)} = ${formatDoubleToString(newMemory)}" , Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, getString(R.string.memory_subtracted_toast) + "${formatDoubleToString(memory)} - ${formatDoubleToString(thisOperationNumber)} = ${formatDoubleToString(newMemory)}", Toast.LENGTH_LONG).show()
 
             memory = newMemory
         }
 
-        buttonMemoryStore.setOnClickListener{
+        buttonMemoryStore.setOnClickListener {
 
-            val currentValue : String = textViewCurrentNumber.text.toString()
+            val currentValue: String = textViewCurrentNumber.text.toString()
             memory = formatStringToDouble(currentValue)
 
             buttonMemoryClear.isEnabled = true
@@ -354,11 +360,12 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
     }
 
     @Throws(IllegalArgumentException::class)
-    private fun onNumberButtonClick(number : String, isHistory : Boolean = false) {
+    private fun onNumberButtonClick(number: String, isHistory: Boolean = false) {
 
-        var currentValue : String = textViewCurrentNumber.text.toString()
-        // In Kotlin, using the equality operator == will call the equals method behind the scenes.
-        currentValue = if (currentValue.equals(ZERO) || isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked || isHistory) number else StringBuilder().append(currentValue).append(number).toString()
+        var currentValue: String = textViewCurrentNumber.text.toString()
+        // In Kotlin there is no more conditional operator ? : like it is in Java, which is used as a shortcut for setting a single variable to one of two states based on a single condition. Here everything can be conveniently done using if..else statement.
+        // In Kotlin, using the equality operator == will call the equals method behind the scenes, so it's totaly acceptable to use it for string comparision.
+        currentValue = if (currentValue == ZERO || isFutureOperationButtonClicked || isInstantOperationButtonClicked || isEqualButtonClicked || isHistory) number else StringBuilder().append(currentValue).append(number).toString()
 
         try {
             currentNumber = formatStringToDouble(currentValue)
@@ -401,19 +408,23 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         isEqualButtonClicked = false
     }
 
+    // Compared to switch/case statement in Java, here using when statement the argument can be literally anything, and the conditions for the branches too.
+    // For example, Java (before version 7) does not support string in switch/case and you can achieve the desired result only by using an enum.
+    // However in Kotlin these restrictions are gone.
     private fun onInstantOperationButtonClick(operation: String) {
 
-        var currentValue : String = textViewCurrentNumber.text.toString()
-        var thisOperationNumber :Double = formatStringToDouble(currentValue)
+        var currentValue: String = textViewCurrentNumber.text.toString()
+        var thisOperationNumber: Double = formatStringToDouble(currentValue)
 
         currentValue = "(${formatDoubleToString(thisOperationNumber)})"
 
         when (operation) {
             PERCENTAGE -> {
-                thisOperationNumber = (currentResult * thisOperationNumber)/100
+                thisOperationNumber = (currentResult * thisOperationNumber) / 100
                 currentValue = formatDoubleToString(thisOperationNumber)
             }
-            ROOT -> thisOperationNumber = thisOperationNumber.sqrt()
+            // Later we use this property to find square root of the provided number.
+            ROOT -> thisOperationNumber = thisOperationNumber.sqrt
             SQUARE -> thisOperationNumber = thisOperationNumber * thisOperationNumber
             FRACTION -> thisOperationNumber = 1 / thisOperationNumber
         }
@@ -438,7 +449,7 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         isFutureOperationButtonClicked = false
     }
 
-    private fun calculateResult() : String {
+    private fun calculateResult(): String {
 
         when (currentOperation) {
             INIT -> {
@@ -483,9 +494,11 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         return useNumberFormat().parse(number).toDouble()
     }
 
-    private fun Double.sqrt(): Double = Math.sqrt(this)
+    // Extension property provides similar mechanism.
+    // Note that you have to define a getter method on your property for this to work.
+    private val Double.sqrt: Double get() = Math.sqrt(this)
 
-    private fun clearEntry(newNumber : Double = 0.0) {
+    private fun clearEntry(newNumber: Double = 0.0) {
         historyInstantOperationText = ""
 
         if (isEqualButtonClicked) {
@@ -508,8 +521,9 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         return super.onCreateOptionsMenu(menu)
     }
 
+    // Functions are defined using the “fun” keyword.
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
+        // Safe call operator ? added to the variable before invoking the property instructs the compiler to invoke the property only if the value isn't null.
         when (item?.itemId) {
             R.id.menu_item_history -> {
                 HistoryActionListDialogFragment.newInstance(historyActionList).show(getSupportFragmentManager(), "dialog")
@@ -531,10 +545,10 @@ class MainActivity : AppCompatActivity(), HistoryActionListDialogFragment.Listen
         Toast.makeText(applicationContext, getString(R.string.history_result) + resultText, Toast.LENGTH_SHORT).show()
     }
 
-    // extension functions to add a behaviour to our Activity
-    // lazy means it won’t be initialised right away but the first time the value is actually needed
+    // Extension function created to add special behaviour to our Activity.
+    // Here keyword lazy means it won’t be initialised right away but the first time the value is actually needed.
     fun <T : View> Activity.bind(@IdRes idRes: Int): Lazy<T> {
-        // function will be called only by the main thread to improve performance
+        // Function will be called only by the main thread to improve performance.
         return lazy(LazyThreadSafetyMode.NONE) { findViewById<T>(idRes) }
     }
 }
